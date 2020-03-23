@@ -279,7 +279,7 @@
     },
     initMap: () => {
       if (!cc.mapScript.hasAttribute('src')) {
-        return cc.mapScript.setAttribute('src', 'http://maps.google.com/maps/api/js?key=AIzaSyDVnlUOgIc-cqAi3hgYXtUlTjV2Q0pnl3Q&callback=cc.initMap');
+        return cc.mapScript.setAttribute('src', 'https://maps.google.com/maps/api/js?key=AIzaSyDVnlUOgIc-cqAi3hgYXtUlTjV2Q0pnl3Q&callback=cc.initMap');
       }
       const mapContainer = cc.find('[data-r~=mapContainer]'),
             mapList = cc.find('[data-r~=mapList]'),
