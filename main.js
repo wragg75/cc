@@ -1,4 +1,4 @@
-(function ccLoad(win) {
+(function ccLoad() {
   cc = {
     find: (sl) => {
       return document.querySelector(sl);
@@ -29,7 +29,7 @@
       }
     },
     initStorage: () => {
-      if (win.localStorage) {
+      if (window.localStorage) {
         try {
           cc.storageAlpha = localStorage.getItem('cc.alpha');
           cc.storageNotes = localStorage.getItem('cc.notes');
@@ -455,4 +455,4 @@
   cc.initField();
   cc.initRandomButton();
   cc.initMapLink();
-})(window);
+})();
