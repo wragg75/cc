@@ -208,7 +208,7 @@ body {
 .cc_m {
   box-sizing: border-box;
   width: calc(100% + 3.2rem); 
-  height: 360px; 
+  height: 320px; 
   border-bottom: 1px solid #ccc;
   margin-top: -1.6rem;
   margin-bottom: 1.4rem; 
