@@ -250,73 +250,70 @@
   function initMap() {
     win.google = {
       initMapCb() {
-        initMapCb();
+        const google = win.google,
+              mapContainer = find('[data-r~=mapContainer]'),
+              mapList = find('[data-r~=mapList]'),
+              mapOptions = {
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+                mapTypeControl: false,
+                zoom: 11
+              },
+              mapObject = new google.maps.Map(mapContainer, mapOptions),
+              markerInfo = new google.maps.InfoWindow(),
+              mapData = {
+                "list": mapList,
+                "locations": [
+                  { "lng":-87.703580, "lat":41.691787, "valid":"1", "abbr":"Blackthorn", "name":"Blackthorn Pub", "address":"3300 W 111th St", "city":"Chicago", "state":"IL", "zip":"60655" },
+                  { "lng":-87.681983, "lat":41.704949, "valid":"1", "abbr":"Brewbakers", "name":"Brewbakers", "address":"10350 S Western Ave", "city":"Chicago", "state":"IL", "zip":"60643" },
+                  { "lng":-87.807066, "lat":41.865059, "valid":"1", "abbr":"Carole's", "name":"Carole's", "address":"7307 Roosevelt Rd", "city":"Forest Park", "state":"IL", "zip":"60130" },
+                  { "lng":-87.777780, "lat":41.710847, "valid":"1", "abbr":"Cullen's", "name":"Cullen's Pub", "address":"9953 SW Hwy", "city":"Oak Lawn", "state":"IL", "zip":"60453" },
+                  { "lng":-87.681758, "lat":41.699787, "valid":"1", "abbr":"Dingers", "name":"Dingers Sports Bar", "address":"10638 S Western Ave", "city":"Chicago", "state":"IL", "zip":"60643" },
+                  { "lng":-87.679738, "lat":41.656811, "valid":"1", "abbr":"Double Play", "name":"Double Play Saloon", "address":"13011 S Western Ave", "city":"Blue Island", "state":"IL", "zip":"60406" },
+                  { "lng":-87.681176, "lat":41.654376, "valid":"0", "abbr":"Eagles", "name":"Fraternal Order of Eagles", "address":"2427 Grove St", "city":"Blue Island", "state":"IL", "zip":"60406" },
+                  { "lng":-87.696591, "lat":41.691448, "valid":"1", "abbr":"Hippo's", "name":"Hippo's", "address":"3011 W 111th St", "city":"Chicago", "state":"IL", "zip":"60655" },
+                  { "lng":-87.768152, "lat":41.690734, "valid":"1", "abbr":"JP's Shortstop", "name":"JP Shortstop's", "address":"5944 W 111th St", "city":"Chicago Ridge", "state":"IL", "zip":"60415" },
+                  { "lng":-87.737050, "lat":41.641756, "valid":"1", "abbr":"Longford", "name":"Longford Pub", "address":"13813 S Cicero Ave", "city":"Crestwood", "state":"IL", "zip":"60445" },
+                  { "lng":-87.681717, "lat":41.649333, "valid":"1", "abbr":"Natural Law", "name":"Natural Law", "address":"13404 Old Western Ave", "city":"Blue Island", "state":"IL", "zip":"60406" },
+                  { "lng":-87.681441, "lat":41.692083, "valid":"1", "abbr":"O'Rourkes", "name":"O'Rourkes Office", "address":"11064 S Western Ave", "city":"Chicago", "state":"IL", "zip":"60643" },
+                  { "lng":-87.787049, "lat":41.582086, "valid":"1", "abbr":"Old Tinley", "name":"Old Tinley Pub &amp; Eatery", "address":"17010 Oak Park Ave", "city":"Tinley Park", "state":"IL", "zip":"60477" },
+                  { "lng":-87.668344, "lat":41.650613, "valid":"1", "abbr":"Riverside", "name":"Riverside Tap Room", "address":"13351 Aulwurm Dr", "city":"Blue Island", "state":"IL", "zip":"60406" },
+                  { "lng":-87.797646, "lat":41.711434, "valid":"1", "abbr":"Rosa's", "name":"Rosa's Pizza & Italian Restaurant", "address":"9909 Harlem Ave", "city":"Chicago Ridge", "state":"IL", "zip":"60415" }
+                ]
+              },
+              markerArray = [];
+        mapObject.setCenter({ lat: 41.66285503596006, lng: -87.72024167178341 });
+        mapData.locations.forEach((loc, i) => {
+          // create marker
+          const marker = new google.maps.Marker({
+            map: mapObject,
+            position: { lat:loc.lat, lng:loc.lng }
+          });
+          markerArray.push(marker);
+          google.maps.event.addListener(marker, 'click', ((marker) => {
+            return () => {
+              let info  = '<b>' + loc.name + '</b><br />';
+              info += loc.address + '<br />';
+              info += loc.city + ', ' + loc.state + '<br />';
+              info += '<a rel="noopener noreferrer" href="http://maps.apple.com/?saddr=current+location&daddr='+ encodeURIComponent(loc.valid=='1' ? loc.name : '' + ', ' + loc.address + ', ' + loc.city + ', ' + loc.state) +'">DIRECTIONS</a>';
+              markerInfo.setContent(info);
+              markerInfo.open(mapObject, marker);
+            }
+          })(marker, i));
+          // create list item
+          const li = doc.createElement('li');
+          li.setAttribute('class', 'cc_mli');
+          li.appendChild(doc.createTextNode(loc.abbr));
+          li.addEventListener('click', () => {
+            google.maps.event.trigger(markerArray[i], 'click');
+            mapObject.setZoom(14);
+            mapObject.panTo(markerArray[i].position);
+          });
+          mapData.list.appendChild(li);
+        });
+        addState(wrap, 'mapRendered');
       }
     }
     find('[data-r~=mapScript]').setAttribute('src', 'https://maps.googleapis.com/maps/api/js?key=AIzaSyDVnlUOgIc-cqAi3hgYXtUlTjV2Q0pnl3Q&callback=google.initMapCb');
-  }
-  function initMapCb() {
-    const google = win.google,
-          mapContainer = find('[data-r~=mapContainer]'),
-          mapList = find('[data-r~=mapList]'),
-          mapOptions = {
-            mapTypeId: google.maps.MapTypeId.ROADMAP,
-            mapTypeControl: false,
-            zoom: 11
-          },
-          mapObject = new google.maps.Map(mapContainer, mapOptions),
-          markerInfo = new google.maps.InfoWindow(),
-          mapData = {
-            "list": mapList,
-            "locations": [
-              { "lng":-87.703580, "lat":41.691787, "valid":"1", "abbr":"Blackthorn", "name":"Blackthorn Pub", "address":"3300 W 111th St", "city":"Chicago", "state":"IL", "zip":"60655" },
-              { "lng":-87.681983, "lat":41.704949, "valid":"1", "abbr":"Brewbakers", "name":"Brewbakers", "address":"10350 S Western Ave", "city":"Chicago", "state":"IL", "zip":"60643" },
-              { "lng":-87.807066, "lat":41.865059, "valid":"1", "abbr":"Carole's", "name":"Carole's", "address":"7307 Roosevelt Rd", "city":"Forest Park", "state":"IL", "zip":"60130" },
-              { "lng":-87.777780, "lat":41.710847, "valid":"1", "abbr":"Cullen's", "name":"Cullen's Pub", "address":"9953 SW Hwy", "city":"Oak Lawn", "state":"IL", "zip":"60453" },
-              { "lng":-87.681758, "lat":41.699787, "valid":"1", "abbr":"Dingers", "name":"Dingers Sports Bar", "address":"10638 S Western Ave", "city":"Chicago", "state":"IL", "zip":"60643" },
-              { "lng":-87.679738, "lat":41.656811, "valid":"1", "abbr":"Double Play", "name":"Double Play Saloon", "address":"13011 S Western Ave", "city":"Blue Island", "state":"IL", "zip":"60406" },
-              { "lng":-87.681176, "lat":41.654376, "valid":"0", "abbr":"Eagles", "name":"Fraternal Order of Eagles", "address":"2427 Grove St", "city":"Blue Island", "state":"IL", "zip":"60406" },
-              { "lng":-87.696591, "lat":41.691448, "valid":"1", "abbr":"Hippo's", "name":"Hippo's", "address":"3011 W 111th St", "city":"Chicago", "state":"IL", "zip":"60655" },
-              { "lng":-87.768152, "lat":41.690734, "valid":"1", "abbr":"JP's Shortstop", "name":"JP Shortstop's", "address":"5944 W 111th St", "city":"Chicago Ridge", "state":"IL", "zip":"60415" },
-              { "lng":-87.737050, "lat":41.641756, "valid":"1", "abbr":"Longford", "name":"Longford Pub", "address":"13813 S Cicero Ave", "city":"Crestwood", "state":"IL", "zip":"60445" },
-              { "lng":-87.681717, "lat":41.649333, "valid":"1", "abbr":"Natural Law", "name":"Natural Law", "address":"13404 Old Western Ave", "city":"Blue Island", "state":"IL", "zip":"60406" },
-              { "lng":-87.681441, "lat":41.692083, "valid":"1", "abbr":"O'Rourkes", "name":"O'Rourkes Office", "address":"11064 S Western Ave", "city":"Chicago", "state":"IL", "zip":"60643" },
-              { "lng":-87.787049, "lat":41.582086, "valid":"1", "abbr":"Old Tinley", "name":"Old Tinley Pub &amp; Eatery", "address":"17010 Oak Park Ave", "city":"Tinley Park", "state":"IL", "zip":"60477" },
-              { "lng":-87.668344, "lat":41.650613, "valid":"1", "abbr":"Riverside", "name":"Riverside Tap Room", "address":"13351 Aulwurm Dr", "city":"Blue Island", "state":"IL", "zip":"60406" },
-              { "lng":-87.797646, "lat":41.711434, "valid":"1", "abbr":"Rosa's", "name":"Rosa's Pizza & Italian Restaurant", "address":"9909 Harlem Ave", "city":"Chicago Ridge", "state":"IL", "zip":"60415" }
-            ]
-          },
-          markerArray = [];
-    mapObject.setCenter({ lat: 41.66285503596006, lng: -87.72024167178341 });
-    mapData.locations.forEach((loc, i) => {
-      // create marker
-      const marker = new google.maps.Marker({
-        map: mapObject,
-        position: { lat:loc.lat, lng:loc.lng }
-      });
-      markerArray.push(marker);
-      google.maps.event.addListener(marker, 'click', ((marker) => {
-        return () => {
-          let info  = '<b>' + loc.name + '</b><br />';
-          info += loc.address + '<br />';
-          info += loc.city + ', ' + loc.state + '<br />';
-          info += '<a rel="noopener noreferrer" href="http://maps.apple.com/?saddr=current+location&daddr='+ encodeURIComponent(loc.valid=='1' ? loc.name : '' + ', ' + loc.address + ', ' + loc.city + ', ' + loc.state) +'">DIRECTIONS</a>';
-          markerInfo.setContent(info);
-          markerInfo.open(mapObject, marker);
-        }
-      })(marker, i));
-      // create list item
-      const li = doc.createElement('li');
-      li.setAttribute('class', 'cc_mli');
-      li.appendChild(doc.createTextNode(loc.abbr));
-      li.addEventListener('click', () => {
-        google.maps.event.trigger(markerArray[i], 'click');
-        mapObject.setZoom(14);
-        mapObject.panTo(markerArray[i].position);
-      });
-      mapData.list.appendChild(li);
-    });
-    addState(wrap, 'mapRendered');
   }
 
   //
